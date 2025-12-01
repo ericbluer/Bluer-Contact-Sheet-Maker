@@ -1,6 +1,74 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
+    <!-- CRITICAL: ICON GENERATOR SCRIPT MUST BE FIRST -->
+    <script>
+        (function() {
+            // Configuration for the authentic film icon
+            var size = 180;
+            var bgColor = '#1C1C1E'; // Dark Grey (Apple System Grey 6)
+            var iconColor = '#E5E5EA'; // Light Grey (Apple System Grey 5)
+
+            var canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            var ctx = canvas.getContext('2d');
+
+            // 1. Background (Square - iOS will round it automatically)
+            ctx.fillStyle = bgColor;
+            ctx.fillRect(0, 0, size, size);
+
+            // 2. Draw Film Strip
+            ctx.fillStyle = iconColor;
+            
+            // Central Film Body
+            var filmW = 100;
+            var filmH = 120;
+            var filmX = (size - filmW) / 2; // Center X
+            var filmY = (size - filmH) / 2; // Center Y
+            
+            // Draw main film body (using rect for max compatibility)
+            // Left rail
+            ctx.fillRect(filmX, filmY, 20, filmH);
+            // Right rail
+            ctx.fillRect(filmX + filmW - 20, filmY, 20, filmH);
+            // Top bar
+            ctx.fillRect(filmX, filmY, filmW, 10);
+            // Bottom bar
+            ctx.fillRect(filmX, filmY + filmH - 10, filmW, 10);
+            // Middle bars (Frames dividers)
+            ctx.fillRect(filmX, filmY + 38, filmW, 8);
+            ctx.fillRect(filmX, filmY + 74, filmW, 8);
+
+            // 3. Convert to Data URI
+            var iconData = canvas.toDataURL('image/png');
+
+            // 4. Inject Links for ALL iOS Sizes (Force override)
+            var head = document.head || document.getElementsByTagName('head')[0];
+
+            function addLink(rel, href) {
+                var link = document.createElement('link');
+                link.rel = rel;
+                link.href = href;
+                head.appendChild(link);
+            }
+
+            // Add standard touch icon
+            addLink('apple-touch-icon', iconData);
+            
+            // Add sized versions to satisfy iPhone 14+ retina checks
+            // (Even though href is same, explicit sizes help iOS parser)
+            var sizes = ['120x120', '152x152', '167x167', '180x180'];
+            for (var i = 0; i < sizes.length; i++) {
+                var l = document.createElement('link');
+                l.rel = 'apple-touch-icon';
+                l.sizes = sizes[i];
+                l.href = iconData;
+                head.appendChild(l);
+            }
+        })();
+    </script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Bluer Contact Sheet</title>
@@ -10,10 +78,8 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Bluer Sheet">
     
-    <!-- Updated Favicon & Apple Touch Icon based on your screenshot -->
-    <!-- Simulated Icon: Dark Grey Background (#1C1C1E) with Light Grey Film Strip (#A1A1A1) -->
+    <!-- Favicon (Browser Tab) -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 128'><rect width='128' height='128' fill='%231C1C1E' rx='28'/><g stroke='%23A1A1A1' stroke-width='8' fill='none' stroke-linecap='round' stroke-linejoin='round'><rect x='32' y='28' width='64' height='72' rx='10'/><line x1='52' y1='28' x2='52' y2='100'/><line x1='76' y1='28' x2='76' y2='100'/><line x1='32' y1='52' x2='96' y2='52'/><line x1='32' y1='76' x2='96' y2='76'/></g></svg>">
-    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 128'><rect width='128' height='128' fill='%231C1C1E' rx='0'/><g stroke='%23A1A1A1' stroke-width='8' fill='none' stroke-linecap='round' stroke-linejoin='round'><rect x='32' y='28' width='64' height='72' rx='10'/><line x1='52' y1='28' x2='52' y2='100'/><line x1='76' y1='28' x2='76' y2='100'/><line x1='32' y1='52' x2='96' y2='52'/><line x1='32' y1='76' x2='96' y2='76'/></g></svg>">
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
