@@ -1,94 +1,73 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <!-- CRITICAL: ICON GENERATOR SCRIPT MUST BE FIRST -->
-    <script>
-        (function() {
-            // Configuration for the authentic film icon
-            var size = 180;
-            var bgColor = '#1C1C1E'; // Dark Grey (Apple System Grey 6)
-            var iconColor = '#E5E5EA'; // Light Grey (Apple System Grey 5)
-
-            var canvas = document.createElement('canvas');
-            canvas.width = size;
-            canvas.height = size;
-            var ctx = canvas.getContext('2d');
-
-            // 1. Background (Square - iOS will round it automatically)
-            ctx.fillStyle = bgColor;
-            ctx.fillRect(0, 0, size, size);
-
-            // 2. Draw Film Strip
-            ctx.fillStyle = iconColor;
-            
-            // Central Film Body
-            var filmW = 100;
-            var filmH = 120;
-            var filmX = (size - filmW) / 2; // Center X
-            var filmY = (size - filmH) / 2; // Center Y
-            
-            // Draw main film body (using rect for max compatibility)
-            // Left rail
-            ctx.fillRect(filmX, filmY, 20, filmH);
-            // Right rail
-            ctx.fillRect(filmX + filmW - 20, filmY, 20, filmH);
-            // Top bar
-            ctx.fillRect(filmX, filmY, filmW, 10);
-            // Bottom bar
-            ctx.fillRect(filmX, filmY + filmH - 10, filmW, 10);
-            // Middle bars (Frames dividers)
-            ctx.fillRect(filmX, filmY + 38, filmW, 8);
-            ctx.fillRect(filmX, filmY + 74, filmW, 8);
-
-            // 3. Convert to Data URI
-            var iconData = canvas.toDataURL('image/png');
-
-            // 4. Inject Links for ALL iOS Sizes (Force override)
-            var head = document.head || document.getElementsByTagName('head')[0];
-
-            function addLink(rel, href) {
-                var link = document.createElement('link');
-                link.rel = rel;
-                link.href = href;
-                head.appendChild(link);
-            }
-
-            // Add standard touch icon
-            addLink('apple-touch-icon', iconData);
-            
-            // Add sized versions to satisfy iPhone 14+ retina checks
-            // (Even though href is same, explicit sizes help iOS parser)
-            var sizes = ['120x120', '152x152', '167x167', '180x180'];
-            for (var i = 0; i < sizes.length; i++) {
-                var l = document.createElement('link');
-                l.rel = 'apple-touch-icon';
-                l.sizes = sizes[i];
-                l.href = iconData;
-                head.appendChild(l);
-            }
-        })();
-    </script>
-
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- OPTIMIZED VIEWPORT: Supports Notch/Dynamic Island & prevents zooming -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Bluer Contact Sheet</title>
     
     <!-- PWA Settings -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Bluer Sheet">
+    <meta name="format-detection" content="telephone=no">
     
-    <!-- Favicon (Browser Tab) -->
+    <!-- === HIGH PERFORMANCE ICON GENERATOR === -->
+    <script>
+        (function() {
+            try {
+                // Config: Apple System Colors
+                var size = 180;
+                var bgColor = '#1C1C1E'; 
+                var iconColor = '#E5E5EA'; 
+
+                var canvas = document.createElement('canvas');
+                canvas.width = size;
+                canvas.height = size;
+                var ctx = canvas.getContext('2d');
+
+                // Draw Background (Square - iOS handles rounding)
+                ctx.fillStyle = bgColor;
+                ctx.fillRect(0, 0, size, size);
+
+                // Draw Film Strip
+                ctx.fillStyle = iconColor;
+                var filmW = 100, filmH = 120;
+                var filmX = (size - filmW) / 2, filmY = (size - filmH) / 2;
+                
+                // Draw shapes using simple rects for max speed & compatibility
+                ctx.fillRect(filmX, filmY, 20, filmH); // Left rail
+                ctx.fillRect(filmX + filmW - 20, filmY, 20, filmH); // Right rail
+                ctx.fillRect(filmX, filmY, filmW, 10); // Top
+                ctx.fillRect(filmX, filmY + filmH - 10, filmW, 10); // Bottom
+                ctx.fillRect(filmX, filmY + 38, filmW, 8); // Divider 1
+                ctx.fillRect(filmX, filmY + 74, filmW, 8); // Divider 2
+
+                var iconData = canvas.toDataURL('image/png');
+                var head = document.head;
+
+                // Inject specific sizes for iOS Retina displays
+                var sizes = ['apple-touch-icon', '120x120', '180x180'];
+                sizes.forEach(function(s) {
+                    var l = document.createElement('link');
+                    l.rel = 'apple-touch-icon';
+                    if(s !== 'apple-touch-icon') l.sizes = s;
+                    l.href = iconData;
+                    head.appendChild(l);
+                });
+            } catch(e) {}
+        })();
+    </script>
+    
+    <!-- Standard Favicon -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 128'><rect width='128' height='128' fill='%231C1C1E' rx='28'/><g stroke='%23A1A1A1' stroke-width='8' fill='none' stroke-linecap='round' stroke-linejoin='round'><rect x='32' y='28' width='64' height='72' rx='10'/><line x1='52' y1='28' x2='52' y2='100'/><line x1='76' y1='28' x2='76' y2='100'/><line x1='32' y1='52' x2='96' y2='52'/><line x1='32' y1='76' x2='96' y2='76'/></g></svg>">
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- React & ReactDOM -->
+    <!-- React Dependencies -->
     <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
-    
-    <!-- Babel -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
     <!-- html2canvas -->
@@ -100,27 +79,36 @@
         body {
             background-color: #000000;
             color: #e5e5e5;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             -webkit-tap-highlight-color: transparent;
+            /* Prevent pull-to-refresh on mobile */
+            overscroll-behavior-y: none;
+            /* Safe area support */
+            padding-bottom: env(safe-area-inset-bottom);
         }
 
-        /* Hide scrollbar */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #111; }
-        ::-webkit-scrollbar-thumb { background: #444; border-radius: 3px; }
+        /* Optimization: Hardware acceleration for smooth animations */
+        .hardware-accel {
+            transform: translateZ(0);
+            backface-visibility: hidden;
+        }
+
+        /* Custom Scrollbar hide */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
         .font-mono-film { font-family: 'Courier Prime', monospace; }
         .font-brand { font-family: 'Oswald', sans-serif; }
 
-        /* Animation for loading */
-        .film-grain { position: relative; }
+        /* Subtle Grain - Reduced opacity for performance */
         .film-grain::after {
             content: "";
             position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.15'/%3E%3C/svg%3E");
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E");
             pointer-events: none;
-            opacity: 0.4;
+            opacity: 0.5;
+            z-index: 50;
         }
     </style>
 </head>
@@ -128,9 +116,10 @@
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState, useEffect, useRef } = React;
+        const { useState, useEffect, useRef, useMemo, useCallback } = React;
 
-        // Film Stocks Data with Authentic Brand Colors
+        // --- STATIC DATA (Moved out of Component for Performance) ---
+        
         const FILM_STOCKS = {
             color: [
                 { id: 'c1', name: 'Portra 400', brand: 'KODAK', type: 'Professional', brandColor: '#FFC200', textColor: '#000000', accentColor: '#FF0000' }, 
@@ -148,18 +137,26 @@
             ]
         };
 
-        // Static Icons
         const ICONS = {
-            Film: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg>,
-            Upload: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>,
-            Grid: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/><path d="M9 3v18"/><path d="M15 3v18"/></svg>,
-            Plus: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>,
-            X: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>,
-            ArrowRight: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>,
-            Edit2: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>,
-            Share: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" x2="12" y1="2" y2="15"/></svg>,
-            Download: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+            Film: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg>,
+            Upload: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>,
+            Grid: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/><path d="M9 3v18"/><path d="M15 3v18"/></svg>,
+            Plus: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14"/><path d="M12 5v14"/></svg>,
+            X: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>,
+            ArrowRight: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>,
+            Edit2: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>,
+            Share: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" x2="12" y1="2" y2="15"/></svg>,
+            Download: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
         };
+
+        // --- OPTIMIZED COMPONENTS ---
+
+        // Memoized Icon Component (Prevents re-renders)
+        const Icon = React.memo(({ name, size = 24, className }) => {
+            const iconSvg = ICONS[name];
+            if (!iconSvg) return null;
+            return React.cloneElement(iconSvg, { width: size, height: size, className });
+        });
 
         const App = () => {
             // State
@@ -176,22 +173,23 @@
             const fileInputRef = useRef(null);
             const contactSheetRef = useRef(null);
 
-            // Icon Helper
-            const Icon = ({ name, size = 24, className }) => {
-                const iconSvg = ICONS[name];
-                if (!iconSvg) return <span>?</span>;
-                return React.cloneElement(iconSvg, { width: size, height: size, className });
-            };
+            // Cleanup Memory on Unmount
+            useEffect(() => {
+                return () => {
+                    images.forEach(img => URL.revokeObjectURL(img.url));
+                };
+            }, []);
 
             // --- Handlers ---
-            const handleFileUpload = (e) => {
+            
+            const handleFileUpload = useCallback((e) => {
                 const files = Array.from(e.target.files);
                 if (images.length + files.length > 36) {
                     alert("Tối đa 36 tấm hình cho một cuộn phim!");
                     return;
                 }
                 
-                // Process files to detect orientation
+                // Process in parallel with orientation detection
                 const newImagePromises = files.map(file => {
                     return new Promise((resolve) => {
                         const url = URL.createObjectURL(file);
@@ -204,90 +202,103 @@
                                 isLandscape: img.naturalWidth > img.naturalHeight
                             });
                         };
+                        img.onerror = () => resolve(null); // Fail safe
                         img.src = url;
                     });
                 });
 
-                Promise.all(newImagePromises).then(newImages => {
-                    setImages(prev => [...prev, ...newImages]);
-                    if (step === 'upload') setStep('edit');
+                Promise.all(newImagePromises).then(results => {
+                    const validImages = results.filter(Boolean);
+                    setImages(prev => [...prev, ...validImages]);
+                    if (step === 'upload' && validImages.length > 0) setStep('edit');
                 });
-            };
+                
+                // Reset input to allow re-uploading same file
+                e.target.value = null; 
+            }, [images, step]);
 
-            const handleRemoveImage = (index) => {
-                const newImages = [...images];
-                URL.revokeObjectURL(newImages[index].url);
-                newImages.splice(index, 1);
-                setImages(newImages);
-                if (newImages.length === 0) setStep('upload');
-            };
+            const handleRemoveImage = useCallback((index) => {
+                setImages(prev => {
+                    const newImages = [...prev];
+                    URL.revokeObjectURL(newImages[index].url);
+                    newImages.splice(index, 1);
+                    if (newImages.length === 0) setStep('upload');
+                    return newImages;
+                });
+            }, []);
 
-            const handleImageClick = (index) => {
-                if (swapSourceIndex === null) {
-                    setSwapSourceIndex(index);
-                } else {
-                    if (swapSourceIndex !== index) {
-                        const newImages = [...images];
-                        const temp = newImages[swapSourceIndex];
-                        newImages[swapSourceIndex] = newImages[index];
-                        newImages[index] = temp;
-                        setImages(newImages);
+            const handleImageClick = useCallback((index) => {
+                setSwapSourceIndex(prev => {
+                    if (prev === null) return index;
+                    if (prev !== index) {
+                        setImages(currentImages => {
+                            const newImgs = [...currentImages];
+                            [newImgs[prev], newImgs[index]] = [newImgs[index], newImgs[prev]];
+                            return newImgs;
+                        });
                     }
-                    setSwapSourceIndex(null);
-                }
-            };
+                    return null;
+                });
+            }, []);
 
             const generateContactSheet = async () => {
                 if (images.length === 0) return;
                 setIsGenerating(true);
-                setTimeout(async () => {
-                    if (contactSheetRef.current) {
-                        try {
-                            const canvas = await html2canvas(contactSheetRef.current, {
-                                scale: 2, 
-                                useCORS: true,
-                                backgroundColor: '#000000',
-                            });
-                            const dataUrl = canvas.toDataURL('image/jpeg', 0.95);
-                            setGeneratedImage(dataUrl);
-                            setStep('result');
-                        } catch (error) {
-                            console.error("Error:", error);
-                            alert("Có lỗi khi tạo ảnh.");
-                        }
+                
+                // Small delay to ensure DOM is ready
+                await new Promise(r => setTimeout(r, 100));
+
+                if (contactSheetRef.current) {
+                    try {
+                        const canvas = await html2canvas(contactSheetRef.current, {
+                            scale: 2, 
+                            useCORS: true,
+                            backgroundColor: '#000000',
+                            logging: false, // Performance
+                            allowTaint: true
+                        });
+                        const dataUrl = canvas.toDataURL('image/jpeg', 0.92); // Slightly optimized compression
+                        setGeneratedImage(dataUrl);
+                        setStep('result');
+                    } catch (error) {
+                        console.error("Error:", error);
+                        alert("Không thể tạo ảnh. Vui lòng thử lại với ít ảnh hơn.");
                     }
-                    setIsGenerating(false);
-                }, 500);
+                }
+                setIsGenerating(false);
             };
 
             const downloadImage = () => {
                 if (!generatedImage) return;
                 const link = document.createElement('a');
-                link.download = `Bluer-ContactSheet-${selectedFilm.brand}-${new Date().toISOString().slice(0,10)}.jpg`;
+                link.download = `Bluer-${selectedFilm.brand}-${new Date().toISOString().slice(0,10)}.jpg`;
                 link.href = generatedImage;
                 link.click();
             };
 
             const shareImage = async () => {
-                if (!generatedImage || !navigator.share) {
-                    alert("Trình duyệt không hỗ trợ chia sẻ trực tiếp. Vui lòng lưu ảnh về máy.");
-                    return;
-                }
+                if (!generatedImage) return;
                 try {
                     const blob = await (await fetch(generatedImage)).blob();
                     const file = new File([blob], "contact-sheet.jpg", { type: "image/jpeg" });
-                    await navigator.share({
-                        title: 'Bluer Contact Sheet',
-                        text: 'Ảnh tráng từ Bluer App',
-                        files: [file],
-                    });
-                } catch (err) { console.log("Share failed", err); }
+                    
+                    if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+                        await navigator.share({
+                            files: [file],
+                        });
+                    } else {
+                        alert("Vui lòng lưu ảnh về máy để chia sẻ.");
+                    }
+                } catch (err) { 
+                    console.log("Share failed", err);
+                    alert("Không thể chia sẻ. Vui lòng lưu ảnh.");
+                }
             };
 
-            // --- Components ---
+            // --- Render Steps ---
 
             const renderUpload = () => (
-                <div className="flex flex-col items-center justify-center h-screen bg-zinc-950 p-6 text-center animate-fade-in">
+                <div className="flex flex-col items-center justify-center h-full min-h-[100dvh] bg-zinc-950 p-6 text-center animate-fade-in safe-pb">
                     <div className="mb-8 w-24 h-24 border-2 border-zinc-700 rounded-lg flex items-center justify-center bg-zinc-900 film-grain shadow-lg shadow-zinc-900/50">
                         <Icon name="Film" size={48} className="text-zinc-400" />
                     </div>
@@ -295,7 +306,7 @@
                     <p className="text-zinc-500 mb-10 max-w-xs">Tạo Contact Sheet kỹ thuật số từ thư viện ảnh của bạn.</p>
                     <button 
                         onClick={() => fileInputRef.current.click()}
-                        className="bg-white text-black font-semibold py-4 px-8 rounded-full flex items-center gap-2 hover:bg-zinc-200 transition-all transform active:scale-95"
+                        className="bg-white text-black font-semibold py-4 px-8 rounded-full flex items-center gap-2 hover:bg-zinc-200 transition-all transform active:scale-95 shadow-xl"
                     >
                         <Icon name="Upload" size={20} />
                         Import Photos
@@ -306,38 +317,33 @@
             );
 
             const renderEdit = () => (
-                <div className="flex flex-col h-screen bg-zinc-950">
-                    <div className="px-4 py-4 border-b border-zinc-800 flex justify-between items-center bg-zinc-950 z-10">
+                <div className="flex flex-col h-[100dvh] bg-zinc-950">
+                    <div className="px-4 py-4 border-b border-zinc-800 flex justify-between items-center bg-zinc-950 z-10 pt-safe-top">
                         <h2 className="text-lg font-bold flex items-center gap-2 text-white">
                             <Icon name="Grid" size={18} />
                             Cuộn phim ({images.length})
                         </h2>
-                        <button onClick={() => fileInputRef.current.click()} className="text-sm bg-zinc-800 hover:bg-zinc-700 text-white px-3 py-1.5 rounded-md flex items-center gap-1">
+                        <button onClick={() => fileInputRef.current.click()} className="text-sm bg-zinc-800 hover:bg-zinc-700 text-white px-3 py-1.5 rounded-md flex items-center gap-1 active:scale-95 transition-transform">
                             <Icon name="Plus" size={14} /> Thêm
                         </button>
                     </div>
 
-                    <div className="flex-1 overflow-y-auto p-4">
-                        <div className="grid grid-cols-3 gap-3">
+                    <div className="flex-1 overflow-y-auto p-4 overscroll-contain">
+                        <div className="grid grid-cols-3 gap-3 pb-24">
                             {images.map((img, idx) => (
                                 <div 
                                     key={img.id} 
                                     onClick={() => handleImageClick(idx)}
-                                    className={`relative aspect-[3/4] bg-zinc-900 rounded overflow-hidden cursor-pointer transition-all border-2 flex items-center justify-center ${swapSourceIndex === idx ? 'border-yellow-500 scale-95 opacity-80' : 'border-transparent hover:border-zinc-600'}`}
+                                    className={`relative aspect-[3/4] bg-zinc-900 rounded overflow-hidden cursor-pointer transition-all border-2 hardware-accel flex items-center justify-center
+                                        ${swapSourceIndex === idx ? 'border-yellow-500 scale-95 opacity-80' : 'border-transparent active:scale-95'}`}
                                 >
-                                    {/* PREVIEW EDIT: Authentic Rotation */}
                                     {img.isLandscape ? (
-                                        <img 
-                                            src={img.url} 
-                                            className="pointer-events-none rotate-90" 
-                                            style={{ width: '133.33%', height: '75%', objectFit: 'cover' }} 
-                                            alt="" 
-                                        />
+                                        <img src={img.url} className="pointer-events-none rotate-90 w-[133%] h-[75%] object-cover" alt="" />
                                     ) : (
                                         <img src={img.url} className="w-full h-full object-cover pointer-events-none" alt="" />
                                     )}
                                     
-                                    <button onClick={(e) => { e.stopPropagation(); handleRemoveImage(idx); }} className="absolute top-1 right-1 bg-black/50 text-white p-1 rounded-full hover:bg-red-500/80 backdrop-blur-sm z-10">
+                                    <button onClick={(e) => { e.stopPropagation(); handleRemoveImage(idx); }} className="absolute top-1 right-1 bg-black/50 text-white p-1 rounded-full active:bg-red-500/80 backdrop-blur-sm z-10">
                                         <Icon name="X" size={12} />
                                     </button>
                                     <div className="absolute bottom-1 left-1 bg-black/60 px-1.5 py-0.5 rounded text-[10px] font-mono text-zinc-300 z-10">
@@ -346,23 +352,23 @@
                                 </div>
                             ))}
                         </div>
-                        <p className="text-center text-zinc-500 text-xs mt-6 mb-2">Chạm vào ảnh để chọn, chạm ảnh khác để đổi chỗ.</p>
                     </div>
 
-                    <div className="bg-zinc-900 border-t border-zinc-800 p-5 rounded-t-2xl shadow-xl z-20">
+                    <div className="bg-zinc-900 border-t border-zinc-800 p-5 rounded-t-2xl shadow-xl z-20 pb-safe-bottom">
                         <div className="mb-4">
                             <div className="flex gap-4 mb-2 text-sm font-medium">
-                                <button className={`${filmCategory === 'color' ? 'text-white border-b-2 border-white' : 'text-zinc-500'}`} onClick={() => {setFilmCategory('color'); setSelectedFilm(FILM_STOCKS.color[0])}}>Color</button>
-                                <button className={`${filmCategory === 'bw' ? 'text-white border-b-2 border-white' : 'text-zinc-500'}`} onClick={() => {setFilmCategory('bw'); setSelectedFilm(FILM_STOCKS.bw[0])}}>B&W</button>
+                                <button className={`pb-1 px-1 ${filmCategory === 'color' ? 'text-white border-b-2 border-white' : 'text-zinc-500'}`} onClick={() => {setFilmCategory('color'); setSelectedFilm(FILM_STOCKS.color[0])}}>Color</button>
+                                <button className={`pb-1 px-1 ${filmCategory === 'bw' ? 'text-white border-b-2 border-white' : 'text-zinc-500'}`} onClick={() => {setFilmCategory('bw'); setSelectedFilm(FILM_STOCKS.bw[0])}}>B&W</button>
                             </div>
-                            <div className="flex overflow-x-auto gap-2 pb-2 no-scrollbar">
+                            <div className="flex overflow-x-auto gap-2 pb-2 no-scrollbar touch-pan-x">
                                 {FILM_STOCKS[filmCategory].map(f => (
                                     <button
                                         key={f.id}
                                         onClick={() => setSelectedFilm(f)}
-                                        className={`whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-mono border transition-colors flex items-center gap-2 ${selectedFilm.id === f.id ? 'border-white bg-zinc-800' : 'border-zinc-700 text-zinc-400 bg-transparent'}`}
+                                        className={`whitespace-nowrap px-3 py-2 rounded-lg text-xs font-mono border transition-all flex items-center gap-2 active:scale-95 
+                                            ${selectedFilm.id === f.id ? 'border-white bg-zinc-800 ring-1 ring-white/20' : 'border-zinc-700 text-zinc-400 bg-transparent'}`}
                                     >
-                                        <div className="w-2 h-2 rounded-full" style={{backgroundColor: f.brandColor}}></div>
+                                        <div className="w-2 h-2 rounded-full shadow-sm" style={{backgroundColor: f.brandColor}}></div>
                                         <span style={{color: selectedFilm.id === f.id ? 'white' : ''}}>{f.brand} {f.name}</span>
                                     </button>
                                 ))}
@@ -373,12 +379,17 @@
                             <span className="text-sm text-zinc-400">Số khung hình</span>
                             <div className="flex bg-zinc-950 p-1 rounded-lg">
                                 {[24, 36].map(mode => (
-                                    <button key={mode} onClick={() => setLayoutMode(mode)} className={`px-4 py-1.5 rounded-md text-xs font-bold transition-all ${layoutMode === mode ? 'bg-zinc-700 text-white shadow' : 'text-zinc-500'}`}>{mode} EXP</button>
+                                    <button key={mode} onClick={() => setLayoutMode(mode)} 
+                                        className={`px-4 py-1.5 rounded-md text-xs font-bold transition-all ${layoutMode === mode ? 'bg-zinc-700 text-white shadow' : 'text-zinc-500'}`}>
+                                        {mode} EXP
+                                    </button>
                                 ))}
                             </div>
                         </div>
 
-                        <button onClick={generateContactSheet} disabled={isGenerating} className={`w-full py-3.5 rounded-lg font-bold flex items-center justify-center gap-2 ${isGenerating ? 'bg-zinc-700 text-zinc-400 cursor-not-allowed' : 'bg-white text-black hover:bg-zinc-200'}`}>
+                        <button onClick={generateContactSheet} disabled={isGenerating} 
+                            className={`w-full py-3.5 rounded-lg font-bold flex items-center justify-center gap-2 active:scale-95 transition-transform 
+                                ${isGenerating ? 'bg-zinc-700 text-zinc-400 cursor-not-allowed' : 'bg-white text-black hover:bg-zinc-200'}`}>
                             {isGenerating ? (<><span className="animate-spin h-4 w-4 border-2 border-zinc-500 border-t-white rounded-full"></span>Developing...</>) : (<>Create Contact Sheet <Icon name="ArrowRight" size={18} /></>)}
                         </button>
                     </div>
@@ -386,25 +397,25 @@
             );
 
             const renderResult = () => (
-                <div className="flex flex-col h-screen bg-zinc-950 animate-fade-in">
+                <div className="flex flex-col h-[100dvh] bg-zinc-950 animate-fade-in">
                     <div className="flex-1 flex items-center justify-center p-4 overflow-hidden relative">
                         <div className="absolute inset-0 bg-gradient-to-b from-zinc-900/50 to-zinc-950 z-0 pointer-events-none"></div>
-                        <div className="relative z-10 w-full max-w-2xl shadow-2xl shadow-black">
+                        <div className="relative z-10 w-full max-w-2xl shadow-2xl shadow-black max-h-full overflow-y-auto no-scrollbar">
                             <img src={generatedImage} alt="Contact Sheet" className="w-full h-auto rounded-sm border border-zinc-800" />
                         </div>
                     </div>
-                    <div className="bg-zinc-900 border-t border-zinc-800 p-5 pb-8 rounded-t-2xl z-20">
+                    <div className="bg-zinc-900 border-t border-zinc-800 p-5 rounded-t-2xl z-20 pb-safe-bottom">
                         <div className="flex gap-3">
-                            <button onClick={() => setStep('edit')} className="flex-1 bg-zinc-800 text-white py-3 rounded-lg font-medium hover:bg-zinc-700 flex items-center justify-center gap-2"><Icon name="Edit2" size={18} /> Edit / Remake</button>
-                            <button onClick={shareImage} className="bg-zinc-800 text-white px-4 rounded-lg hover:bg-zinc-700 flex items-center justify-center"><Icon name="Share" size={20} /></button>
-                            <button onClick={downloadImage} className="flex-1 bg-white text-black py-3 rounded-lg font-bold hover:bg-zinc-200 flex items-center justify-center gap-2"><Icon name="Download" size={18} /> Save</button>
+                            <button onClick={() => setStep('edit')} className="flex-1 bg-zinc-800 text-white py-3 rounded-lg font-medium active:bg-zinc-700 flex items-center justify-center gap-2 active:scale-95 transition-transform"><Icon name="Edit2" size={18} /> Edit</button>
+                            <button onClick={shareImage} className="bg-zinc-800 text-white px-5 rounded-lg active:bg-zinc-700 flex items-center justify-center active:scale-95 transition-transform"><Icon name="Share" size={20} /></button>
+                            <button onClick={downloadImage} className="flex-1 bg-white text-black py-3 rounded-lg font-bold active:bg-zinc-200 flex items-center justify-center gap-2 active:scale-95 transition-transform"><Icon name="Download" size={18} /> Save</button>
                         </div>
                     </div>
                 </div>
             );
 
-            // --- THE AUTHENTIC CONTACT SHEET RENDERER ---
             const renderHiddenSheet = () => {
+                // Only render when needed to save DOM resources
                 if (step === 'upload') return null;
 
                 const SHEET_WIDTH = 2400; 
@@ -414,99 +425,55 @@
                 const imgWidth = (SHEET_WIDTH - (PADDING * 2) - (GAP * (COLS - 1))) / COLS;
                 const imgHeight = imgWidth * (3/4);
                 
-                const totalCells = layoutMode; 
-                const rows = Math.ceil(totalCells / COLS);
+                const rows = Math.ceil(layoutMode / COLS);
                 const SHEET_HEIGHT = (PADDING * 2) + (rows * imgHeight) + ((rows - 1) * GAP) + 220;
-
-                const now = new Date();
-                const dateStr = `${now.getFullYear()}.${String(now.getMonth() + 1).padStart(2, '0')}.${String(now.getDate()).padStart(2, '0')}`;
-                
-                const brandColor = selectedFilm.brandColor;
-                const textColor = selectedFilm.textColor;
-                const accentColor = selectedFilm.accentColor;
+                const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '.');
 
                 return (
-                    <div style={{ position: 'absolute', top: 0, left: '-9999px', width: `${SHEET_WIDTH}px`, height: `${SHEET_HEIGHT}px` }}>
+                    <div style={{ position: 'absolute', top: 0, left: '-9999px', width: `${SHEET_WIDTH}px`, height: `${SHEET_HEIGHT}px`, visibility: 'hidden' }}>
                         <div ref={contactSheetRef} className="bg-black text-white relative flex flex-col" style={{ width: '100%', height: '100%', padding: `${PADDING}px` }}>
                             
-                            {/* Top Header */}
+                            {/* Header */}
                             <div className="absolute top-6 left-0 w-full flex justify-between px-10 opacity-60 font-mono-film text-2xl font-bold uppercase tracking-widest text-zinc-500">
-                                <span>{selectedFilm.id.toUpperCase()}</span>
+                                <span>{selectedFilm.id}</span>
                                 <span>SAFETY FILM</span>
                                 <span>NO. {Math.floor(Math.random() * 9000) + 1000}</span>
                             </div>
 
-                            {/* Main Grid */}
+                            {/* Grid */}
                             <div style={{ display: 'grid', gridTemplateColumns: `repeat(${COLS}, 1fr)`, gap: `${GAP}px`, marginBottom: '60px', marginTop: '40px' }}>
                                 {Array.from({ length: layoutMode }).map((_, i) => {
                                     const img = images[i];
                                     return (
                                         <div key={i} style={{ width: `${imgWidth}px`, height: `${imgHeight}px` }} className="bg-zinc-900 relative group flex items-center justify-center overflow-hidden">
                                             {img ? (
-                                                /* AUTHENTIC ROTATION LOGIC */
                                                 img.isLandscape ? (
-                                                    <img 
-                                                        src={img.url} 
-                                                        style={{ 
-                                                            width: `${imgHeight}px`, // Swap width/height logic to fill container
-                                                            height: `${imgWidth}px`, 
-                                                            objectFit: 'cover',
-                                                            transform: 'rotate(90deg)'
-                                                        }} 
-                                                    />
+                                                    <img src={img.url} style={{ width: `${imgHeight}px`, height: `${imgWidth}px`, objectFit: 'cover', transform: 'rotate(90deg)' }} />
                                                 ) : (
                                                     <img src={img.url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                                 )
                                             ) : ( <div className="w-full h-full bg-[#080808]"></div> )}
-                                            
-                                            {/* Frame Number */}
-                                            <div className="font-mono-film font-bold absolute -bottom-9 left-1/2 transform -translate-x-1/2" style={{ fontSize: '22px', color: '#666' }}>
-                                                {i + 1}{i < 9 ? ' ' : ''}A
-                                            </div>
+                                            <div className="font-mono-film font-bold absolute -bottom-9 left-1/2 transform -translate-x-1/2" style={{ fontSize: '22px', color: '#666' }}>{i + 1}{i < 9 ? ' ' : ''}A</div>
                                         </div>
                                     )
                                 })}
                             </div>
 
-                            {/* Footer - THE BRAND IDENTITY AREA */}
-                            <div className="mt-auto flex justify-between items-center" 
-                                 style={{ 
-                                     borderTop: `4px solid ${brandColor}`, 
-                                     paddingTop: '30px',
-                                     backgroundColor: '#000' 
-                                 }}>
-                                
+                            {/* Footer */}
+                            <div className="mt-auto flex justify-between items-center" style={{ borderTop: `4px solid ${selectedFilm.brandColor}`, paddingTop: '30px', backgroundColor: '#000' }}>
                                 <div className="flex items-end gap-6">
-                                    <div style={{ backgroundColor: brandColor, color: textColor, padding: '10px 25px', borderRadius: '4px', display: 'inline-block' }}>
-                                        <h1 className="font-brand uppercase tracking-tighter" style={{ fontSize: '60px', lineHeight: '1', margin: 0 }}>
-                                            {selectedFilm.brand}
-                                        </h1>
+                                    <div style={{ backgroundColor: selectedFilm.brandColor, color: selectedFilm.textColor, padding: '10px 25px', borderRadius: '4px' }}>
+                                        <h1 className="font-brand uppercase tracking-tighter" style={{ fontSize: '60px', lineHeight: '1', margin: 0 }}>{selectedFilm.brand}</h1>
                                     </div>
                                     <div>
-                                        <p className="font-brand uppercase text-4xl" style={{ color: accentColor, letterSpacing: '2px' }}>
-                                            {selectedFilm.name}
-                                        </p>
-                                        <p className="font-mono-film text-xl text-zinc-500 uppercase mt-1">
-                                            {selectedFilm.type}
-                                        </p>
+                                        <p className="font-brand uppercase text-4xl" style={{ color: selectedFilm.accentColor, letterSpacing: '2px' }}>{selectedFilm.name}</p>
+                                        <p className="font-mono-film text-xl text-zinc-500 uppercase mt-1">32MM LENS | ISO 400</p>
                                     </div>
                                 </div>
-
                                 <div className="text-right">
-                                    <div className="flex flex-col items-end">
-                                        <span className="bg-zinc-900 text-zinc-400 px-3 py-1 rounded font-mono-film text-lg mb-2">INDEX PRINT</span>
-                                        <p className="text-5xl font-mono-film text-white font-bold">{dateStr}</p>
-                                        <p className="text-xl text-zinc-500 mt-2 font-mono-film">32MM LENS | ISO 400</p>
-                                    </div>
+                                    <span className="bg-zinc-900 text-zinc-400 px-3 py-1 rounded font-mono-film text-lg mb-2 inline-block">INDEX PRINT</span>
+                                    <p className="text-5xl font-mono-film text-white font-bold">{dateStr}</p>
                                 </div>
-                            </div>
-
-                            {/* Side Sprockets */}
-                            <div className="absolute top-0 bottom-0 left-3 w-10 flex flex-col justify-between py-10 opacity-30 pointer-events-none">
-                                {Array.from({length: 32}).map((_,i) => <div key={i} className="w-6 h-8 bg-[#222] rounded-sm mb-6 ml-2"></div>)}
-                            </div>
-                            <div className="absolute top-0 bottom-0 right-3 w-10 flex flex-col justify-between py-10 opacity-30 pointer-events-none">
-                                {Array.from({length: 32}).map((_,i) => <div key={i} className="w-6 h-8 bg-[#222] rounded-sm mb-6 ml-2"></div>)}
                             </div>
                         </div>
                     </div>
@@ -514,7 +481,7 @@
             };
 
             return (
-                <div className="min-h-screen bg-zinc-950 text-white font-sans selection:bg-yellow-500 selection:text-black">
+                <div className="h-full font-sans selection:bg-yellow-500 selection:text-black">
                     {step === 'upload' && renderUpload()}
                     {step === 'edit' && renderEdit()}
                     {step === 'result' && renderResult()}
